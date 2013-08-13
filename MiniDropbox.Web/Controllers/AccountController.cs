@@ -230,8 +230,9 @@ namespace MiniDropbox.Web.Controllers
         }
         public void SendEmail(string address, string subject, string message)
         {
+            
             string email = "postmaster@app5907.mailgun.org";
-            string password = "7yildfq2a6r3";
+            string password = "3ipcsv86ayd9";
 
             var loginInfo = new NetworkCredential(email, password);
             var msg = new MailMessage();
@@ -242,7 +243,6 @@ namespace MiniDropbox.Web.Controllers
             msg.Subject = subject;
             msg.Body = message;
             msg.IsBodyHtml = true;
-
             smtpClient.EnableSsl = true;
             smtpClient.UseDefaultCredentials = false;
             smtpClient.Credentials = loginInfo;

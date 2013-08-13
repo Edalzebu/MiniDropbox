@@ -160,10 +160,10 @@
   <ItemGroup>
     <Compile Include="App_Start\BootstrapBundleConfig.cs" />
     <Compile Include="App_Start\ExampleLayoutsRouteConfig.cs" />
-    <Compile Include="BootstrapSupport\ControlGroupExtensions.cs" />
-    <Compile Include="BootstrapSupport\HtmlHelpers\GlyphIcons.cs" />
-    <Compile Include="BootstrapSupport\HtmlHelpers\Paging.cs" />
-    <Compile Include="BootstrapSupport\ViewHelperExtensions.cs" />
+    <Compile Include="Controllers\BootstrapSupport\ControlGroupExtensions.cs" />
+    <Compile Include="Controllers\BootstrapSupport\HtmlHelpers\GlyphIcons.cs" />
+    <Compile Include="Controllers\BootstrapSupport\HtmlHelpers\Paging.cs" />
+    <Compile Include="Controllers\BootstrapSupport\ViewHelperExtensions.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BootstrapBaseController.cs" />
     <Compile Include="Controllers\AdministratorController.cs" />
