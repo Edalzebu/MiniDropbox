@@ -1,0 +1,18 @@
+﻿@model MiniDropbox.Web.Models.AccountRecoveryModel
+
+@{
+    ViewBag.Title = "RecoverAccount";
+    Layout = "~/Views/shared/_BootstrapLayout.basic.cshtml";
+}
+
+<h2>Recover your Account!</h2>
+
+<div > <p>Please enter your email address, so we can send you a link to restore your password.</p>
+
+@using (Html.BeginForm("RecoverAccount" , "Account"))
+{
+    @Html.TextBoxFor(x => x.Email);
+    <br>
+    <button class="btn btn-large btn-primary" type="submit">Recover Account</button>
+}
+    </div> 

@@ -1,0 +1,23 @@
+﻿@using BootstrapSupport
+@model Object
+@using (Html.BeginForm("registerAccount","Account" ))
+{
+    @Html.ValidationSummary(true)
+    <fieldset class="form-horizontal">
+        <legend>@Model.GetLabel() <small>Details</small></legend>
+        @foreach (var property in Model.VisibleProperties())
+        {
+            using(Html.ControlGroupFor(property.Name)){
+                @Html.Label(property.Name.ToSeparatedWords(), new { @class = "control-label" })
+                 <div class="controls">
+                     @Html.Editor(property.Name, new { @class = "input-xlarge" })
+                     @Html.ValidationMessage(property.Name, null, new { @class = "help-inline" })
+                 </div>
+            }
+        }
+		<div class="form-actions">
+            <button type="submit" class="btn btn-success">Register</button>
+            @Html.ActionLink("Go Back", "LogIn", null, new { @class = "btn " })
+          </div>
+    </fieldset>
+}

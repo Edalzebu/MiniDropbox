@@ -1,0 +1,36 @@
+﻿@model MiniDropbox.Web.Models.AccountLoginModel
+
+@{
+    ViewBag.Title = "LogIn";
+    Layout = "~/Views/shared/_BootstrapLayout.empty.cshtml";
+}
+
+<h2 style="text-align:left; color:darkblue">MiniDropbox</h2>
+<div style="text-align:right" >
+    
+    @Html.ActionLink("Register", "RegisterAccount", "Account", new { @class = "btn btn-success btn-large"})
+</div>
+
+
+@using (@Html.BeginForm("LogIn", "Account", FormMethod.Post, new { @class = "form-signin" }))
+{
+    <h2 class="form-signin-heading">Please sign in</h2>
+    @Html.TextBoxFor(x=>x.Username,new {@class="input-block-level"})
+    @Html.PasswordFor(x=>x.Password,new {@class="input-block-level"})
+    @*<input type="text" class="input-block-level" placeholder="Email address">
+        <input type="password" class="input-block-level" placeholder="Password">
+       *@ <label class="checkbox">
+              <input type="checkbox" value="remember-me"> Remember me
+          </label>@*
+       
+    @Html.ActionLink("Sign In","LogIn","Account",new {@class="btn btn-large btn-primary"});
+        *@<button class="btn btn-primary" type="submit">Sign in</button>@*
+    
+        
+    *@ <div style="left:50px">
+       @Html.ActionLink("Forgot your password?", "RecoverAccount", "Account")
+       </div> 
+     
+    
+}
+
