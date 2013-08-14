@@ -189,6 +189,7 @@
     <Compile Include="Models\DiskContentModel.cs" />
     <Compile Include="Models\HomeInputModel.cs" />
     <Compile Include="Models\Admin\PremiumPackageModel.cs" />
+    <Compile Include="Models\RecoverPasswordModel.cs" />
     <Compile Include="Models\UpdatePasswordModel.cs" />
     <Compile Include="Models\UpdateProfileModel.cs" />
     <Compile Include="NavigationRoutes\INavigationRouteFilter.cs" />
@@ -267,6 +268,7 @@
     <Content Include="Views\Administrator\PremiumPackage.cshtml" />
     <Content Include="Views\Administrator\ListPremiumPackages.cshtml" />
     <Content Include="Views\Administrator\TogglePremium.cshtml" />
+    <Content Include="Views\Account\RecoverPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -72,9 +72,16 @@ namespace MiniDropbox.Web.Controllers
             if (account != null)
             {
                 Success("Se ha enviado un email a ese correo.");
-                SendEmail(model.Email, "Recupera tu clave", " Se nos ha dicho que perdistes tu contraseña recuperala en http://localhost:1843/account/UpdatePassword?"+model.Email+".");
+                var token = new Token();
+                token.Name = CreateToken(model.Email);
+                token.UserId = account.Id;
+                DateTime currentDate = DateTime.Now;
+                DateTime expdate = currentDate.AddDays(5);
+                token.ExpirationDate = expdate;
+                _writeOnlyRepository.Create(token);
+                SendEmail(model.Email, "Recupera tu clave", " Se nos ha dicho que perdistes tu contraseña recuperala en http://localhost:1843/account/UpdatePassword?token="+token.Name+" .");
                 //Enviar correo a usuario
-                return RedirectToAction("ListAllContent", "Disk");
+                return RedirectToAction("LogIn", "Account");
             }
             Error("Lo sentimos, E-Mail no coincide con ninguna de nuestras cuentas.");
             return View(new AccountRecoveryModel());
@@ -122,7 +129,7 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Referral()
+        public ActionResult Referral(string user)
         {
             return View(new AccountReferralModel());
         }
@@ -180,8 +187,50 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpGet]
+        public ActionResult RecoverPassword(string token)
+        {
+            var tok = _readOnlyRepository.First<Token>(x => x.Name == token);
+            var currentDate = DateTime.Now;
+            if (tok == null) return RedirectToAction("LogIn", "Account");
+            
+
+            if (tok.ExpirationDate < currentDate)
+            {
+                Error("Ese token ya expiro, vuelve a pedir recuperar la cuenta");
+            }
+            else
+            {
+
+                var model = new RecoverPasswordModel();
+                var account = _readOnlyRepository.First<Account>(x => x.Id == tok.UserId);
+                model.Email = account.Email;
+                return View(model);
+            }
+            
+            return RedirectToAction("LogIn", "Account");
+        }
+        [HttpPost]
+        public ActionResult RecoverPassword(RecoverPasswordModel model)
+        {
+           
+            if (model.Confirmpassword != model.Password)
+            {
+                Error("Las contraseñas deben coincidir.");
+                return View(model);
+            }
+            else
+            {
+                var account = _readOnlyRepository.First<Account>(x => x.Email == model.Email);
+                account.Password = model.Password;
+                _writeOnlyRepository.Update(account);
+                Success("Se ha cambiado su clave con exito.");
+            }
+            return RedirectToAction("LogIn","Account");
+        }
+        [HttpGet]
         public ActionResult UpdatePassword()
         {
+            
             return View(new UpdatePasswordModel());
         }
         [HttpPost]
@@ -248,5 +297,14 @@ namespace MiniDropbox.Web.Controllers
             smtpClient.Credentials = loginInfo;
             smtpClient.Send(msg);
         }
+
+        public string CreateToken(string email)
+        {
+            int token = GetHashCode();
+            string realToken = email + token;
+            return realToken;
+
+        }
     }
+    
 }
