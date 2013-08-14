@@ -129,7 +129,7 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult Referral(string user)
+        public ActionResult Referral()
         {
             return View(new AccountReferralModel());
         }
