@@ -1,0 +1,36 @@
+﻿@using MiniDropbox.Web.Models.Disk
+@model MoveModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Create Foo Bar</h3>
+</div>
+
+@using (Html.BeginForm("Move", "Disk", FormMethod.Post, new { @class = "modal-form" }))
+{
+@Html.ValidationSummary()
+
+<div  class="modal-body">
+    <div>
+        @Html.LabelFor(x => x.FileName)
+        @Html.EditorFor(x => x.FileName)
+        @Html.ValidationMessageFor(x => x.FileName)
+    </div>
+    <div>
+        @Html.LabelFor(x => x.CurrentDir)
+        @Html.EditorFor(x => x.CurrentDir)
+        @Html.ValidationMessageFor(x => x.CurrentDir)
+    </div>
+    <div>
+        @Html.LabelFor(x => x.MoveToDir)
+        @Html.EditorFor(x => x.MoveToDir)
+        @Html.ValidationMessageFor(x => x.MoveToDir)
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Undo</button>
+    <button class="btn btn-primary" type="submit">Save</button>
+</div>
+
+}

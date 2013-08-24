@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Web;
 using BootstrapMvcSample.Controllers;
 using FluentSecurity;
+using MiniDropbox.Domain;
 using MiniDropbox.Web.Controllers;
 
 namespace MiniDropbox.Web.Infrastructure
@@ -19,6 +20,9 @@ namespace MiniDropbox.Web.Infrastructure
 
                 configuration.ForAllControllers().DenyAnonymousAccess();
                 configuration.For<AccountController>(x => x.LogIn()).Ignore();
+                configuration.For<AccountController>(x => x.registerAccount()).Ignore();
+                configuration.For<AccountController>(x => x.RecoverAccount()).Ignore();
+                //configuration.For<DiskController>(x => x.ListAllContent()).RequireRole(new object[] {"User"});
                 configuration.For<HomeController>(x => x.Create()).RequireRole(new object[] {"Admin"});
                 configuration.ResolveServicesUsing(type =>
                 {

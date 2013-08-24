@@ -1,5 +1,11 @@
 ﻿using System.Web.Mvc;
 using BootstrapSupport;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Web.Security;
+using System;
+using System.Web.Configuration;
+using System.Web;
 
 namespace BootstrapMvcSample.Controllers
 {
@@ -23,6 +29,35 @@ namespace BootstrapMvcSample.Controllers
         public void Error(string message)
         {
             TempData.Add(Alerts.ERROR, message);
+        }
+        public void SetAuthenticationCookie(string userEmail, List<string> roles)
+        {
+            var cookieSection = (HttpCookiesSection)ConfigurationManager.GetSection("system.web/httpCookies");
+
+            var authenticationSection =
+                (AuthenticationSection)ConfigurationManager.GetSection("system.web/authentication");
+
+
+            var authTicket =
+                new FormsAuthenticationTicket(
+                    1, userEmail, System.DateTime.Now,
+                    DateTime.Now.AddMinutes(authenticationSection.Forms.Timeout.TotalMinutes),
+                    false, string.Join("|", roles.ToArray()));
+
+
+            String encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+
+            var authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+
+
+            if (cookieSection.RequireSSL || authenticationSection.Forms.RequireSSL)
+            {
+                authCookie.Secure = true;
+            }
+
+
+            HttpContext.Response.Cookies.Add(authCookie);
+
         }
     }
 }

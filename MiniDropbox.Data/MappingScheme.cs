@@ -4,6 +4,7 @@ using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Conventions.Helpers;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 
 namespace MiniDropbox.Data
 {

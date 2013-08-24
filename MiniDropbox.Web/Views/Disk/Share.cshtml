@@ -1,0 +1,31 @@
+﻿@using MiniDropbox.Web.Models.Disk
+@model ShareModel
+
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Create Foo Bar</h3>
+</div>
+
+@using (Html.BeginForm("Share", "Disk", FormMethod.Post, new { @class = "modal-form" }))
+{
+@Html.ValidationSummary()
+
+<div  class="modal-body">
+    <div>
+        @Html.LabelFor(x => x.FileName)
+        @Html.EditorFor(x => x.FileName)
+        @Html.ValidationMessageFor(x => x.FileName)
+    </div>
+    <div>
+        @Html.LabelFor(x => x.ShareWith)
+        @Html.EditorFor(x => x.ShareWith)
+        @Html.ValidationMessageFor(x => x.ShareWith)
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Undo</button>
+    <button class="btn btn-primary" type="submit">Save</button>
+</div>
+
+}

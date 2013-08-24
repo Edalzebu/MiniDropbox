@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Web.Mvc;
+using System.Web.Security;
+using System.Web.UI.WebControls;
 using System.Web.WebPages;
 using AutoMapper;
 using BootstrapMvcSample.Controllers;
+using MiniDropbox.Data;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
 using MiniDropbox.Web.Models;
 using MiniDropbox.Web.Models.Premium;
@@ -19,35 +25,37 @@ namespace MiniDropbox.Web.Controllers
     {
         private readonly IReadOnlyRepository _readOnlyRepository;
         private readonly IWriteOnlyRepository _writeOnlyRepository;
+        private EmailHandler _emailHandler;
         
         public AccountController(IReadOnlyRepository readOnlyRepository, IWriteOnlyRepository writeOnlyRepository)
         {
             _readOnlyRepository = readOnlyRepository;
             _writeOnlyRepository = writeOnlyRepository;
+            _emailHandler = new EmailHandler();
         }
 
         [HttpGet]
         public ActionResult LogIn()
         {
-            var account = _readOnlyRepository.GetById<Account>(1);
-            
             return View(new AccountLoginModel());
         }
-
         [HttpPost]
         public ActionResult LogIn(AccountLoginModel model)
-        {
-
-            //Mapper.CreateMap<AccountRegisterModel, Account>()
-              //  .ForMember(x => x.Email, o => o.MapFrom(y => y.Email));
-           
+        {   
             //var account = Mapper.Map<AccountLoginModel, Account>(model);
             var cuenta = _readOnlyRepository.First<Account>(( x=> x.Email==model.Username && x.Password == model.Password ) );
             if (cuenta != null)
             {
+               
+                var roles = new List<string>();
+                roles.Add("User");
+                //cuenta.Roles.Select(x => x.Name).ToList();
+                FormsAuthentication.SetAuthCookie(model.Username, model.RememberMe);
+                SetAuthenticationCookie(model.Username, roles);
                 if (cuenta.Banned == true)
                 {
-                    Error("Esa cuenta ha sido baneado por violar los terminos de uso");
+                    var razon = _readOnlyRepository.First<Ban>(x => x.Email == model.Username);
+                    Error("La cuenta: "+razon.Email+" ha sido baneada por la siguiente razon: "+razon.Reason);
                     return RedirectToAction("LogIn", "Account");
                 }
                 if (cuenta.Admin == true)
@@ -61,12 +69,12 @@ namespace MiniDropbox.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult recoverAccount()
+        public ActionResult RecoverAccount()
         {
             return View(new AccountRecoveryModel());
         }
         [HttpPost]
-        public ActionResult recoverAccount(AccountRecoveryModel model)
+        public ActionResult RecoverAccount(AccountRecoveryModel model)
         {
             var account = _readOnlyRepository.First<Account>(x => x.Email == model.Email);
             if (account != null)
@@ -79,7 +87,7 @@ namespace MiniDropbox.Web.Controllers
                 DateTime expdate = currentDate.AddDays(5);
                 token.ExpirationDate = expdate;
                 _writeOnlyRepository.Create(token);
-                SendEmail(model.Email, "Recupera tu clave", " Se nos ha dicho que perdistes tu contraseña recuperala en http://localhost:1843/account/UpdatePassword?token="+token.Name+" .");
+                _emailHandler.SendEmail(model.Email, "Recupera tu clave", " Se nos ha dicho que perdistes tu contraseña recuperala en http://localhost:1843/account/UpdatePassword?token="+token.Name+" .");
                 //Enviar correo a usuario
                 return RedirectToAction("LogIn", "Account");
             }
@@ -115,14 +123,23 @@ namespace MiniDropbox.Web.Controllers
             else
             {
                 var account = Mapper.Map<AccountRegisterModel, Account>(model);
+                var directory = new Directories();
+                directory.Name = account.Email;
+                directory.ModifiedDate = DateTime.Now.ToString();
+                directory.FileType = "Folder";
 
+                _writeOnlyRepository.Create(directory);
+                var dire = _readOnlyRepository.First<Directories>(x => x.Name == account.Email);
+                account.RootId = dire.Id;
+                dire.Name = "root";
+                _writeOnlyRepository.Update(dire);
                 account.Admin = false;
                 account.Space = 5;
                 account.Banned = false;
                 _writeOnlyRepository.Create(account);
-                SendEmail(model.Email, "Bienvenido a MiniDropbox","Bienvenido a minidropbox, te has registrado bien.");
+                _emailHandler.SendEmail(model.Email, "Bienvenido a MiniDropbox","Bienvenido a minidropbox, te has registrado bien.");
                 Success("El usuario " + model.FirstName + " ha sido registrado.");
-                return RedirectToAction("LogIn", "Account");
+                return RedirectToAction("LogIn", "Account"); 
             }
             
             //RedirectToAction("RegisterAccount", "Account");
@@ -145,7 +162,7 @@ namespace MiniDropbox.Web.Controllers
             var account = _readOnlyRepository.First<Account>(x => x.Email == "edwin_zelaya5@hotmail.com");
             account.Referidos.Add(model.Email);
             _writeOnlyRepository.Update(account);
-            SendEmail(model.Email, " Invitacion a MiniDropbox ", "Edwin Zelaya te ha invitado a formar parte de MiniDropbox, unete Http://localhost:1843/Account/registerAccount?edwin_zelaya5@hotmail.com ");
+            _emailHandler.SendEmail(model.Email, " Invitacion a MiniDropbox ", "Edwin Zelaya te ha invitado a formar parte de MiniDropbox, unete Http://localhost:1843/Account/registerAccount?edwin_zelaya5@hotmail.com ");
 
             Success("Se ha enviado una invitacion a: "+model.Email);
             return View(new AccountReferralModel());
@@ -277,30 +294,12 @@ namespace MiniDropbox.Web.Controllers
             }
             return false;
         }
-        public void SendEmail(string address, string subject, string message)
-        {
-            
-            string email = "postmaster@app5907.mailgun.org";
-            string password = "3ipcsv86ayd9";
-
-            var loginInfo = new NetworkCredential(email, password);
-            var msg = new MailMessage();
-            var smtpClient = new SmtpClient("smtp.mailgun.org", 587);
-
-            msg.From = new MailAddress(email);
-            msg.To.Add(new MailAddress(address));
-            msg.Subject = subject;
-            msg.Body = message;
-            msg.IsBodyHtml = true;
-            smtpClient.EnableSsl = true;
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.Credentials = loginInfo;
-            smtpClient.Send(msg);
-        }
+       
 
         public string CreateToken(string email)
         {
             int token = GetHashCode();
+            
             string realToken = email + token;
             return realToken;
 

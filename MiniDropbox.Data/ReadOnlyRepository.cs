@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
 using NHibernate;
 using NHibernate.Linq;
@@ -36,7 +37,7 @@ namespace MiniDropbox.Data
             return _session.Query<T>().Where(expression);
         }
 
-        public IQueryable<T> GetAllAccounts<T>() where T : class, IEntity
+        public IQueryable<T> GetAll<T>() where T : class, IEntity
         {
             return _session.Query<T>();
         }

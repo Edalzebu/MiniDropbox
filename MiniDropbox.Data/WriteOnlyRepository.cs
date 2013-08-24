@@ -1,5 +1,6 @@
 ﻿using System;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 using MiniDropbox.Domain.Services;
 using NHibernate;
 

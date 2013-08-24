@@ -187,6 +187,10 @@
     <Compile Include="Models\Admin\SpaceManagerModel.cs" />
     <Compile Include="Models\AvailableSpaceModel.cs" />
     <Compile Include="Models\DiskContentModel.cs" />
+    <Compile Include="Models\Disk\DeleteModel.cs" />
+    <Compile Include="Models\Disk\MoveModel.cs" />
+    <Compile Include="Models\Disk\ShareModel.cs" />
+    <Compile Include="Models\Disk\UploadModel.cs" />
     <Compile Include="Models\HomeInputModel.cs" />
     <Compile Include="Models\Admin\PremiumPackageModel.cs" />
     <Compile Include="Models\RecoverPasswordModel.cs" />
@@ -269,6 +273,10 @@
     <Content Include="Views\Administrator\ListPremiumPackages.cshtml" />
     <Content Include="Views\Administrator\TogglePremium.cshtml" />
     <Content Include="Views\Account\RecoverPassword.cshtml" />
+    <Content Include="Views\Disk\Upload.cshtml" />
+    <Content Include="Views\Disk\Move.cshtml" />
+    <Content Include="Views\Disk\Share.cshtml" />
+    <Content Include="Views\Disk\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

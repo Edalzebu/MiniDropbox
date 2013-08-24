@@ -15,6 +15,7 @@ namespace BootstrapMvcSample
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.MapNavigationRoute<AccountController>("Inicio", c => c.LogIn());
+            
 
             routes.MapNavigationRoute<ExampleLayoutsController>("Perfil", c => c.Starter())
                   .AddChildRoute<DiskController>("Lista Archivos", c => c.ListAllContent())

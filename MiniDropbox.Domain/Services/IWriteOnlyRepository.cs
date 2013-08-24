@@ -1,4 +1,6 @@
-﻿namespace MiniDropbox.Domain.Services
+﻿using MiniDropbox.Domain.Entities;
+
+namespace MiniDropbox.Domain.Services
 {
     public interface IWriteOnlyRepository
     {

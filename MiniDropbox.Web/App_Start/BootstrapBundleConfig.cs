@@ -8,6 +8,11 @@ namespace BootstrapSupport
     {
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include("~/Scripts/bootstrap.js"));
+            bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
+                                "~/Content/bootstrap.css",
+                                "~/Content/bootstrap-responsive.css"));
+
             bundles.Add(new ScriptBundle("~/js").Include(
                 "~/Scripts/jquery-{version}.js",
                 "~/Scripts/jquery-migrate-{version}.js",

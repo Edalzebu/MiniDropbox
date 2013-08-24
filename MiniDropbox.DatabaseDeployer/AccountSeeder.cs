@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using DomainDrivenDatabaseDeployer;
 using FizzWare.NBuilder;
 using MiniDropbox.Domain;
+using MiniDropbox.Domain.Entities;
 using NHibernate;
 
 namespace MiniDropbox.DatabaseDeployer

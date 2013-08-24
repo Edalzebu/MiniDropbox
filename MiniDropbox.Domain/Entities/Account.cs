@@ -1,9 +1,23 @@
 ﻿using System.Collections.Generic;
 
-namespace MiniDropbox.Domain
+namespace MiniDropbox.Domain.Entities
 {
     public class Account : IEntity
     {
+        private readonly IList<Role> _roles = new List<Role>();
+
+        public virtual IEnumerable<Role> Roles
+        {
+            get { return _roles; }
+        }
+
+        public virtual void AddRole(Role role)
+        {
+            if (!_roles.Contains(role))
+            {
+                _roles.Add(role);
+            }
+        }
         public virtual long Id { get; set; }
         public virtual bool IsArchived { get; set; }
         public virtual IList<File> Files { get; set; }
@@ -16,5 +30,6 @@ namespace MiniDropbox.Domain
         public virtual int Space { get; set; }
         public virtual long SpaceUsed { get; set; }
         public virtual bool Banned { get; set; }
+        public virtual long RootId { get; set; }
     }
 }
